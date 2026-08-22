@@ -1,289 +1,291 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Austrian Check-in Simulator | Vienna</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vienna Airport Operations Center V1</title>
 <style>
 *{box-sizing:border-box}
 :root{
- --bg:#f4f5f7;--surface:#fff;--line:#dfe3e8;--text:#1d2329;--muted:#717b85;
- --red:#d71920;--red2:#ad1117;--dark:#20252b;--green:#2f7d59;--amber:#b97b22;--blue:#315d89;
+ --green:#123f35;--green2:#0c3029;--green3:#1b574a;--gold:#c5a35d;--gold2:#e3cf9d;
+ --bg:#eef1ef;--surface:#fff;--line:#dce2de;--text:#1f2925;--muted:#718078;
+ --red:#a94442;--amber:#b17822;--blue:#426b87;--ok:#37775b;
 }
 html,body{margin:0;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
 button,input,select,textarea{font:inherit}button{cursor:pointer}
-.topbar{position:fixed;top:0;left:0;right:0;height:68px;background:#fff;border-bottom:1px solid var(--line);display:grid;grid-template-columns:280px 1fr auto;align-items:center;z-index:20}
-.brand{height:100%;display:flex;align-items:center;gap:11px;padding:0 20px;border-right:1px solid var(--line)}
-.logo{width:38px;height:38px;border-radius:9px;background:var(--red);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:900}
-.brand strong,.brand span,.agent strong,.agent span{display:block}.brand strong{font-size:14px}.brand span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.11em;margin-top:3px}
-.center{display:flex;justify-content:center;gap:18px;align-items:center}.pill{border:1px solid var(--line);background:#fafbfc;border-radius:999px;padding:7px 10px;font-size:9px;color:var(--muted)}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px}.clock{font-size:10px;color:var(--muted)}
-.agent{display:flex;gap:10px;align-items:center;padding:0 20px}.avatar{width:34px;height:34px;border-radius:50%;background:#f6e7e8;color:var(--red);display:grid;place-items:center;font-weight:800;font-size:10px}.agent strong{font-size:11px}.agent span{font-size:9px;color:var(--muted);margin-top:3px}
-.sidebar{position:fixed;top:68px;left:0;bottom:0;width:280px;background:#24292f;color:#d9dee3;padding:14px;display:flex;flex-direction:column;justify-content:space-between;z-index:10;overflow:auto}.nav{display:grid;gap:4px}.nav button{border:0;background:transparent;color:#adb5bd;border-radius:8px;padding:10px 11px;display:grid;grid-template-columns:24px 1fr auto;text-align:left;align-items:center;font-size:10px}.nav button:hover{background:#30363d;color:#fff}.nav button.active{background:#353b42;color:#fff;box-shadow:inset 3px 0 0 var(--red)}.nav b{font-weight:600}.badge{min-width:20px;padding:2px 5px;border-radius:999px;background:var(--red);font-size:8px;color:#fff;text-align:center}.sidebar-foot{display:grid;gap:9px}.display-btn{border:1px solid #4c535a;background:#30363d;color:#fff;border-radius:8px;padding:10px;font-size:9px}.sidebar-foot span{font-size:8px;text-align:center;color:#727b84}
-.main{margin-left:280px;padding-top:68px;min-height:100vh}.view{display:none;padding:28px;max-width:1600px;margin:0 auto}.view.active{display:block}
-.pagehead{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:20px}.eyebrow{display:block;font-size:8px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:var(--red);margin-bottom:6px}h1{font-size:26px;margin:0}.pagehead p{font-size:10px;color:var(--muted);margin:6px 0 0}.btnrow{display:flex;gap:8px;flex-wrap:wrap}
-.primary,.secondary,.ghost,.danger{border-radius:8px;padding:9px 12px;font-size:9px;font-weight:800}.primary{border:0;background:var(--red);color:#fff}.primary:hover{background:var(--red2)}.secondary{border:1px solid #edc7ca;background:#fff4f4;color:var(--red)}.ghost{border:1px solid var(--line);background:#fff;color:#49515a}.danger{border:1px solid #efc6c6;background:#fff1f1;color:#a42b2b}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;margin-bottom:14px}.stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:15px}.stat span{font-size:8px;color:var(--muted)}.stat strong{display:block;font-size:23px;margin:6px 0 2px}.stat small{font-size:8px;color:#949ca4}
-.grid2{display:grid;grid-template-columns:1.45fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.panel{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.panelhead{padding:14px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.panelhead h2{font-size:12px;margin:0}.kicker{display:block;font-size:7px;font-weight:900;color:var(--red);letter-spacing:.11em;text-transform:uppercase;margin-bottom:3px}
-.table{width:100%;border-collapse:collapse;font-size:9px}.table th,.table td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left}.table th{background:#fafbfc;color:var(--muted);font-weight:700}.table tr:hover td{background:#fcfcfd}.status{display:inline-block;border-radius:999px;padding:4px 7px;font-size:7px;font-weight:800}.ok{background:#e9f4ee;color:var(--green)}.warn{background:#fff4e3;color:#99610f}.bad{background:#fff0f0;color:#a33434}.info{background:#edf3f8;color:#416481}
-.searchbox{padding:16px}.searchrow{display:flex;gap:8px}.searchrow input{flex:1}
-input,select,textarea{width:100%;border:1px solid #ced4db;border-radius:7px;background:#fff;padding:9px 10px;font-size:9px;outline:none}input:focus,select:focus,textarea:focus{border-color:#e08f92;box-shadow:0 0 0 3px rgba(215,25,32,.06)}textarea{min-height:85px;resize:vertical}
-.stack{display:grid;gap:11px}.card{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.cardhead{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start}.cardhead h3{font-size:12px;margin:0}.cardhead p{font-size:8px;color:var(--muted);margin:4px 0 0}.cardbody{padding:14px 15px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}.data{display:grid;grid-template-columns:110px 1fr;gap:7px 10px;font-size:8px}.data dt{color:var(--muted)}.data dd{margin:0;font-weight:600}.actions{padding:11px 15px;border-top:1px solid var(--line);display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap}
-.workarea{display:grid;grid-template-columns:330px 1fr;gap:14px}.leftstack{display:grid;gap:12px;align-content:start}.formpanel{padding:16px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;font-size:8px;font-weight:800;color:#515a63;margin-bottom:5px}.full{grid-column:1/-1}
-.seatmap{display:grid;grid-template-columns:repeat(7,34px);gap:5px;justify-content:center;padding:18px}.seat{height:30px;border:1px solid #cfd5db;border-radius:6px;background:#fff;font-size:8px}.seat.occupied{background:#e9ecef;color:#9aa1a8;cursor:not-allowed}.seat.selected{background:var(--red);color:#fff;border-color:var(--red)}.aisle{width:15px}
-.bagrow{display:grid;grid-template-columns:1fr 90px 100px auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:8px}.bagrow:last-child{border-bottom:0}.money{font-size:18px;font-weight:800}
-.flightboard{display:grid;gap:0}.flightrow{display:grid;grid-template-columns:80px 90px 1fr 90px 90px 110px;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);font-size:8px;align-items:center}.flightrow:hover{background:#fafafa}.flightrow strong{font-size:10px}
-.modalbg{position:fixed;inset:0;background:rgba(20,24,28,.5);display:grid;place-items:center;padding:20px;z-index:60}.modalbg.hidden{display:none}.modal{width:min(800px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:12px;padding:20px}.modal h2{font-size:17px;margin:0 0 5px}.modal>p{font-size:9px;color:var(--muted)}.modalactions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
-.toast{position:fixed;right:20px;bottom:20px;background:#252b31;color:#fff;border-radius:8px;padding:10px 13px;font-size:8px;opacity:0;transform:translateY(6px);transition:.2s;z-index:70}.toast.show{opacity:1;transform:none}
-.empty{padding:30px;text-align:center;font-size:9px;color:var(--muted)}
-@media(max-width:1100px){.stats{grid-template-columns:repeat(2,1fr)}.grid2,.grid3,.workarea,.cardbody{grid-template-columns:1fr}.flightrow{grid-template-columns:70px 80px 1fr 80px}}
+header{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:fixed;inset:0 0 auto 0;z-index:30}
+.brand{display:flex;align-items:center;gap:11px}.mark{width:42px;height:42px;border-radius:10px;background:var(--green);color:var(--gold2);display:grid;place-items:center;font-weight:950;font-size:11px;letter-spacing:.06em}.brand b{display:block;font-size:14px}.brand small{display:block;color:var(--muted);font-size:8px;margin-top:3px;text-transform:uppercase;letter-spacing:.1em}
+.topcenter{display:flex;gap:8px;align-items:center}.pill{font-size:8px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#fafbf9;color:#5e6b65}.pill.live:before{content:"";display:inline-block;width:7px;height:7px;background:#4b8a69;border-radius:50%;margin-right:6px}.operator{font-size:10px;text-align:right}.operator small{display:block;color:var(--muted);margin-top:2px}
+aside{position:fixed;top:72px;bottom:0;left:0;width:260px;background:var(--green2);color:#fff;padding:14px;z-index:20}
+nav{display:grid;gap:4px}nav button{border:0;background:transparent;color:#9eb4ab;border-radius:8px;padding:10px 11px;text-align:left;font-size:10px;display:grid;grid-template-columns:25px 1fr auto;align-items:center}nav button:hover,nav button.active{background:#17463b;color:#fff}nav button.active{box-shadow:inset 3px 0 var(--gold)}.badge{font-size:7px;background:#285d50;color:#fff;border-radius:999px;padding:2px 5px}
+.sidebottom{position:absolute;left:14px;right:14px;bottom:14px;display:grid;gap:7px}.sidebottom button{border:1px solid #2f6256;background:#17463b;color:#fff;border-radius:8px;padding:9px;font-size:8px}
+main{margin-left:260px;padding-top:72px}.view{display:none;padding:28px;max-width:1650px;margin:auto}.view.active{display:block}
+.head{display:flex;justify-content:space-between;gap:15px;align-items:flex-end;margin-bottom:18px}.eyebrow{font-size:8px;color:var(--green3);font-weight:950;letter-spacing:.15em}.head h1{margin:5px 0 0;font-size:26px;letter-spacing:-.02em}.head p{font-size:10px;color:var(--muted);margin:6px 0 0}.btns{display:flex;gap:7px;flex-wrap:wrap}
+.btn{border-radius:8px;padding:9px 11px;font-size:9px;font-weight:800;border:1px solid var(--line);background:#fff;color:#334039}.btn.green{background:var(--green);color:#fff;border-color:var(--green)}.btn.gold{background:#f7f0df;color:#745a25;border-color:#e6d2a5}.btn.red{background:#fff1f0;color:var(--red);border-color:#ecc8c6}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px}.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:11px}.stat{padding:14px}.stat small{font-size:8px;color:var(--muted)}.stat strong{display:block;font-size:22px;margin-top:6px}.stat em{display:block;font-size:7px;color:#8a9690;font-style:normal;margin-top:2px}
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:13px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.panelhead{padding:13px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.panelhead h2{font-size:12px;margin:0}.panelbody{padding:14px}
+.table{width:100%;border-collapse:collapse;font-size:8px}.table th,.table td{padding:8px 9px;border-bottom:1px solid var(--line);text-align:left}.table th{background:#f8faf8;color:var(--muted)}.table tr:hover td{background:#fafcfb}
+.status{display:inline-block;padding:4px 7px;border-radius:999px;font-size:7px;font-weight:850}.ok{background:#e9f4ee;color:var(--ok)}.warn{background:#fff5e3;color:#95600f}.bad{background:#fff0ef;color:#a43b39}.info{background:#edf3f7;color:#45687f}.goldstatus{background:#f8f0dd;color:#836527}
+.queueitem{padding:11px 13px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.queueitem:last-child{border-bottom:0}.queueitem strong{font-size:10px}.queueitem small{display:block;color:var(--muted);font-size:8px;margin-top:3px}.queueitem .right{text-align:right}
+.workspace{display:grid;grid-template-columns:340px 1fr;gap:13px}.search{padding:13px}.searchrow{display:flex;gap:6px}.searchrow input{flex:1}
+input,select,textarea{width:100%;border:1px solid #ccd5d0;border-radius:7px;padding:8px 9px;font-size:9px;outline:none;background:#fff}textarea{min-height:90px;resize:vertical}
+.details{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.dl{display:grid;grid-template-columns:115px 1fr;gap:6px 8px;font-size:8px}.dl dt{color:var(--muted)}.dl dd{margin:0;font-weight:650}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.incident{border-left:4px solid var(--amber)}.incident.high{border-left-color:var(--red)}.incident.low{border-left-color:var(--green3)}
+.service-card{background:#fff;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}.service-head{padding:12px 14px;display:flex;justify-content:space-between;border-bottom:1px solid var(--line)}.service-head h3{font-size:11px;margin:0}.service-head p{font-size:8px;color:var(--muted);margin:4px 0 0}.service-body{padding:13px 14px;font-size:9px}.service-actions{padding:10px 14px;border-top:1px solid var(--line);display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap}
+.mapgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.zone{padding:15px 12px;border-radius:10px;background:#fff;border:1px solid var(--line)}.zone b{font-size:12px}.zone span{display:block;font-size:8px;color:var(--muted);margin-top:4px}.zone .bar{height:5px;border-radius:999px;background:#edf0ee;margin-top:10px;overflow:hidden}.zone .bar i{display:block;height:100%;background:var(--green3)}
+.modalbg{position:fixed;inset:0;background:rgba(10,30,25,.55);display:grid;place-items:center;padding:20px;z-index:60}.hidden{display:none!important}.modal{width:min(760px,100%);background:#fff;border-radius:13px;padding:20px;max-height:90vh;overflow:auto}.modal h2{font-size:17px;margin:0 0 5px}.modal p{font-size:9px;color:var(--muted)}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;font-size:8px;font-weight:800;margin-bottom:5px}.modalactions{display:flex;justify-content:flex-end;gap:7px;margin-top:15px}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--green2);color:#fff;padding:10px 13px;border-radius:8px;font-size:9px;opacity:0;transition:.2s;z-index:70}.toast.show{opacity:1}
+@media(max-width:1200px){.stats{grid-template-columns:repeat(3,1fr)}.grid2,.workspace{grid-template-columns:1fr}.mapgrid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
-<header class="topbar">
- <div class="brand"><div class="logo">OS</div><div><strong>Austrian Airlines</strong><span>Vienna Airport Check-in Simulator</span></div></div>
- <div class="center"><span class="pill"><i class="dot"></i>DCS Online</span><span class="pill">VIE · Terminal 3 · Level 1</span><span id="clock" class="clock"></span></div>
- <div class="agent"><div class="avatar">PS</div><div><strong>Paul S.</strong><span>Check-in Agent · Counter 351</span></div></div>
+<header>
+ <div class="brand"><div class="mark">VIE</div><div><b>Vienna Airport Operations Center</b><small>Passenger Operations · Terminal Coordination</small></div></div>
+ <div class="topcenter"><span class="pill live">OPS Online</span><span class="pill" id="shiftState">Day Shift</span><span class="pill" id="clock"></span></div>
+ <div class="operator"><b>Operations Desk 04</b><small>Vienna Airport · Terminal Operations</small></div>
 </header>
 
-<aside class="sidebar">
- <div class="nav">
-  <button class="active" data-view="dashboard"><span>⌂</span><b>Übersicht</b></button>
-  <button data-view="checkin"><span>✓</span><b>Check-in</b><i class="badge" id="queueBadge">0</i></button>
-  <button data-view="flights"><span>✈</span><b>Flüge</b></button>
-  <button data-view="passengers"><span>◉</span><b>Passagiere</b></button>
-  <button data-view="baggage"><span>▣</span><b>Gepäck</b></button>
-  <button data-view="seats"><span>▦</span><b>Sitzplan</b></button>
-  <button data-view="special"><span>!</span><b>Special Services</b></button>
-  <button data-view="transactions"><span>€</span><b>Zahlungen</b></button>
-  <button data-view="stats"><span>▥</span><b>Statistik</b></button>
- </div>
- <div class="sidebar-foot">
-  <button class="display-btn" id="openDisplay">Passagierdisplay öffnen</button>
-  <span>Austrian Check-in Simulator · lokale Demo</span>
- </div>
+<aside>
+<nav>
+ <button class="active" data-view="dashboard"><span>⌂</span><b>Operations</b></button>
+ <button data-view="flights"><span>✈</span><b>Flights & Gates</b></button>
+ <button data-view="services"><span>?</span><b>Passenger Service</b><i class="badge" id="serviceBadge">0</i></button>
+ <button data-view="incidents"><span>!</span><b>Incidents</b><i class="badge" id="incidentBadge">0</i></button>
+ <button data-view="terminal"><span>▦</span><b>Terminal Status</b></button>
+ <button data-view="transport"><span>⇄</span><b>Ground Transport</b></button>
+ <button data-view="directory"><span>◉</span><b>Airport Directory</b></button>
+ <button data-view="reports"><span>▥</span><b>Reports</b></button>
+</nav>
+<div class="sidebottom">
+ <button id="openDisplay">Passenger Display öffnen</button>
+ <button data-action="displayAds">Display · Werbung</button>
+ <button data-action="displayWelcome">Display · Willkommen</button>
+ <button data-action="displayDepartures">Display · Abflüge</button>
+</div>
 </aside>
 
-<main class="main">
- <section class="view active" id="view-dashboard">
-  <div class="pagehead"><div><span class="eyebrow">VIENNA HUB</span><h1>Check-in Operations</h1><p>Fiktive Trainingsdaten · Austrian Airlines · Flughafen Wien</p></div><div class="btnrow"><button class="secondary" data-action="generateQueue">Neue Passagiere erzeugen</button><button class="primary" data-view="checkin">Passagier einchecken</button></div></div>
-  <div class="stats">
-   <article class="stat"><span>Abflüge</span><strong id="flightStat">0</strong><small>heute im Datensatz</small></article>
-   <article class="stat"><span>Offen Check-in</span><strong id="openStat">0</strong><small>Passagiere</small></article>
-   <article class="stat"><span>Eingecheckt</span><strong id="checkedStat">0</strong><small>Passagiere</small></article>
-   <article class="stat"><span>Gepäck</span><strong id="bagsStat">0</strong><small>aufgegebene Stücke</small></article>
-   <article class="stat"><span>Gebühren</span><strong id="feesStat">€ 0</strong><small>simuliert</small></article>
-  </div>
-  <div class="grid2">
-   <article class="panel"><div class="panelhead"><div><span class="kicker">DEPARTURES</span><h2>Nächste Austrian-Flüge</h2></div></div><div id="dashboardFlights"></div></article>
-   <article class="panel"><div class="panelhead"><div><span class="kicker">COUNTER QUEUE</span><h2>Wartende Passagiere</h2></div></div><div id="dashboardQueue"></div></article>
-  </div>
- </section>
+<main>
+<section class="view active" id="view-dashboard">
+ <div class="head"><div><span class="eyebrow">AIRPORT CONTROL</span><h1>Vienna Airport Operations</h1><p>Flüge, Gates, Terminalstatus, Passagierfragen und operative Störungen.</p></div><div class="btns"><button class="btn gold" data-action="newService">Neuen Servicefall</button><button class="btn red" data-action="newIncident">Störung simulieren</button></div></div>
+ <div class="stats">
+  <div class="stat"><small>Departures</small><strong id="sDep"></strong><em>im Datensatz</em></div>
+  <div class="stat"><small>Delayed</small><strong id="sDelay"></strong><em>aktive Verspätungen</em></div>
+  <div class="stat"><small>Open incidents</small><strong id="sInc"></strong><em>operative Fälle</em></div>
+  <div class="stat"><small>Service queue</small><strong id="sServ"></strong><em>wartende Personen</em></div>
+  <div class="stat"><small>Security avg.</small><strong id="sSec"></strong><em>Minuten</em></div>
+  <div class="stat"><small>Baggage belts</small><strong id="sBelt"></strong><em>aktiv</em></div>
+ </div>
+ <div class="grid2">
+  <div class="panel"><div class="panelhead"><h2>Live Operations Board</h2><button class="btn" data-view="flights">Alle Flüge</button></div><div id="opsFlights"></div></div>
+  <div><div class="panel"><div class="panelhead"><h2>Passenger Service Queue</h2><button class="btn" data-view="services">Öffnen</button></div><div id="opsServices"></div></div><div class="panel" style="margin-top:12px"><div class="panelhead"><h2>Incidents</h2></div><div id="opsIncidents"></div></div></div>
+ </div>
+</section>
 
- <section class="view" id="view-checkin">
-  <div class="pagehead"><div><span class="eyebrow">DCS / CHECK-IN</span><h1>Passagierabfertigung</h1><p>PNR suchen, Dokumente prüfen, Sitzplatz vergeben, Gepäck annehmen und Bordkarte ausstellen.</p></div></div>
-  <div class="workarea">
-   <div class="leftstack">
-    <article class="panel searchbox">
-     <span class="kicker">PASSENGER SEARCH</span>
-     <div class="searchrow"><input id="checkinSearch" placeholder="PNR, Name, Ticketnummer..."><button class="primary" data-action="searchCheckin">Suchen</button></div>
-    </article>
-    <article class="panel"><div class="panelhead"><div><span class="kicker">QUEUE</span><h2>Warteschlange</h2></div></div><div id="checkinQueue"></div></article>
-   </div>
-   <div id="checkinWorkspace" class="panel empty">Noch kein Passagier geöffnet.</div>
-  </div>
- </section>
+<section class="view" id="view-flights">
+ <div class="head"><div><span class="eyebrow">FLIGHT & GATE CONTROL</span><h1>Flights & Gates</h1><p>Gate-Zuteilung, Status, Terminal und Positionen verwalten.</p></div></div>
+ <div class="panel"><div id="flightTable"></div></div>
+</section>
 
- <section class="view" id="view-flights">
-  <div class="pagehead"><div><span class="eyebrow">FLIGHT CONTROL</span><h1>Flüge</h1><p>Austrian-Abflüge aus Wien mit Check-in-Status, Gate und Auslastung.</p></div></div>
-  <article class="panel"><div class="flightboard" id="flightBoard"></div></article>
- </section>
+<section class="view" id="view-services">
+ <div class="head"><div><span class="eyebrow">PASSENGER EXPERIENCE</span><h1>Passenger Service</h1><p>Person kommt zum Desk, Frage prüfen und passende Information auf den zweiten Bildschirm schicken.</p></div><button class="btn green" data-action="newService">Person kommt zum Schalter</button></div>
+ <div class="workspace">
+  <div class="panel"><div class="panelhead"><h2>Warteschlange</h2></div><div id="serviceQueue"></div></div>
+  <div id="serviceWork" class="panel"><div class="panelbody">Noch keinen Servicefall geöffnet.</div></div>
+ </div>
+</section>
 
- <section class="view" id="view-passengers">
-  <div class="pagehead"><div><span class="eyebrow">PASSENGER LIST</span><h1>Passagiere</h1><p>Alle fiktiven Buchungen durchsuchen.</p></div></div>
-  <article class="panel searchbox"><div class="searchrow"><input id="passengerSearch" placeholder="Name, PNR, Flug, Status, Ziel..."><button class="secondary" data-action="searchPassengers">Suchen</button></div></article>
-  <div class="stack" id="passengerList"></div>
- </section>
+<section class="view" id="view-incidents">
+ <div class="head"><div><span class="eyebrow">IRREGULAR OPERATIONS</span><h1>Incidents</h1><p>Störungen priorisieren, bearbeiten und auf Displays kommunizieren.</p></div><button class="btn red" data-action="newIncident">Störung simulieren</button></div>
+ <div id="incidentList"></div>
+</section>
 
- <section class="view" id="view-baggage">
-  <div class="pagehead"><div><span class="eyebrow">BAGGAGE</span><h1>Gepäckübersicht</h1><p>Aufgegebenes Gepäck, Gewichte, Tags und Gebühren.</p></div></div>
-  <div class="stack" id="baggageList"></div>
- </section>
+<section class="view" id="view-terminal">
+ <div class="head"><div><span class="eyebrow">TERMINAL FLOW</span><h1>Terminal Status</h1><p>Auslastung, Wartezeiten und operative Bereiche.</p></div></div>
+ <div id="terminalGrid" class="mapgrid"></div>
+</section>
 
- <section class="view" id="view-seats">
-  <div class="pagehead"><div><span class="eyebrow">SEAT CONTROL</span><h1>Sitzplätze</h1><p>Öffne einen Passagier im Check-in, um seinen Sitzplatz zu bearbeiten.</p></div></div>
-  <div id="seatView" class="panel empty">Kein aktiver Passagier.</div>
- </section>
+<section class="view" id="view-transport">
+ <div class="head"><div><span class="eyebrow">LANDSIDE</span><h1>Ground Transport</h1><p>Bahn, CAT, Bus, Taxi, Parken und Mietwagen.</p></div></div>
+ <div id="transportList" class="grid3"></div>
+</section>
 
- <section class="view" id="view-special">
-  <div class="pagehead"><div><span class="eyebrow">SSR</span><h1>Special Services</h1><p>Rollstuhl, UMNR, Haustier, Sportgepäck und besondere Hinweise.</p></div></div>
-  <div id="specialList" class="stack"></div>
- </section>
+<section class="view" id="view-directory">
+ <div class="head"><div><span class="eyebrow">AIRPORT DIRECTORY</span><h1>Airport Directory</h1><p>Lounges, Stores, Gastronomie, Hotels und Services für Passagierfragen.</p></div></div>
+ <div id="directoryList" class="grid3"></div>
+</section>
 
- <section class="view" id="view-transactions">
-  <div class="pagehead"><div><span class="eyebrow">PAYMENTS</span><h1>Zahlungen</h1><p>Übergepäck, Zusatzgepäck, Sitzplatz- und Upgradegebühren.</p></div></div>
-  <div id="transactionList" class="stack"></div>
- </section>
-
- <section class="view" id="view-stats">
-  <div class="pagehead"><div><span class="eyebrow">REPORTING</span><h1>Schichtstatistik</h1><p>Operative Kennzahlen der aktuellen Simulation.</p></div></div>
-  <div id="statsView" class="grid3"></div>
- </section>
+<section class="view" id="view-reports">
+ <div class="head"><div><span class="eyebrow">SHIFT REPORTING</span><h1>Reports</h1></div></div>
+ <div id="reportGrid" class="stats"></div>
+</section>
 </main>
 
 <div class="modalbg hidden" id="modalbg"><div class="modal" id="modal"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
+(()=>{
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const STORE="austrianCheckinSimulatorV1";
-const firstNames=["Anna","Lukas","Sophie","Michael","David","Laura","Jonas","Clara","Felix","Mara","Oliver","Nina","Thomas","Sarah","Max","Julia","Daniel","Emily","Noah","Emma","Leon","Johanna","Simon","Elena"];
-const lastNames=["Berger","Huber","Keller","Novak","Schmidt","Weiß","Hartmann","Baumann","Wagner","Steiner","Meier","Fischer","Leitner","Moser","Gruber","König","Hofer","Brown","Wilson","Müller","Schneider","Fuchs"];
+const STORE="vieOpsCenterV1";
 const flights=[
-["OS201","Berlin","BER","07:00","F12","A320neo","Schengen"],["OS111","Munich","MUC","07:15","F08","E195","Schengen"],
-["OS561","Zurich","ZRH","07:30","F21","A320","Schengen"],["OS371","Amsterdam","AMS","08:05","F16","A320neo","Schengen"],
-["OS451","London","LHR","08:20","D24","A320neo","Non-Schengen"],["OS301","Copenhagen","CPH","08:45","F10","A320","Schengen"],
-["OS351","Brussels","BRU","09:10","F18","E195","Schengen"],["OS431","Paris","CDG","09:25","F22","A320neo","Schengen"],
-["OS215","Frankfurt","FRA","09:45","F06","E195","Schengen"],["OS463","Manchester","MAN","10:10","D21","A320","Non-Schengen"],
-["OS81","Los Angeles","LAX","10:35","D31","B787-9","Long-haul"],["OS65","Chicago","ORD","10:55","D34","B787-9","Long-haul"],
-["OS87","New York","JFK","11:20","D36","B787-9","Long-haul"],["OS93","Washington","IAD","11:45","D32","B787-9","Long-haul"],
-["OS207","Berlin","BER","12:05","F14","A320neo","Schengen"],["OS513","Milan","MXP","12:20","F19","A320","Schengen"],
-["OS535","Bologna","BLQ","12:40","F05","E195","Schengen"],["OS741","Kosice","KSC","13:00","F09","E195","Schengen"],
-["OS723","Budapest","BUD","13:25","F11","E195","Schengen"],["OS795","Sofia","SOF","13:50","D18","A320","Non-Schengen"],
-["OS601","Moscow Training","SVO","14:10","D20","A320neo","Training"],["OS721","Belgrade","BEG","14:30","D15","A320","Non-Schengen"],
-["OS649","Iasi","IAS","15:00","D12","E195","Non-Schengen"],["OS553","Zurich","ZRH","15:25","F24","A320neo","Schengen"]
-].map((x,i)=>({number:x[0],destination:x[1],iata:x[2],time:x[3],gate:x[4],aircraft:x[5],zone:x[6],status:i<4?"Boarding":i<13?"Check-in open":"Scheduled",closed:i<2}));
+["OS965","Austrian","Stockholm","ARN","12:15","F24","T3","A320neo","On time"],
+["LH1241","Lufthansa","Frankfurt","FRA","12:25","F16","T3","A321","Boarding"],
+["EK126","Emirates","Dubai","DXB","12:35","G31","T3","A380","On time"],
+["FR731","Ryanair","Rome","FCO","12:45","C34","T1","B737-8200","Gate open"],
+["BA699","British Airways","London","LHR","12:55","D24","T1","A320","Delayed 25 min"],
+["AF1139","Air France","Paris","CDG","13:05","C21","T1","A220","On time"],
+["KL1904","KLM","Amsterdam","AMS","13:15","C18","T1","B737-800","On time"],
+["LX1579","SWISS","Zurich","ZRH","13:20","F20","T3","A220","Boarding"],
+["QR184","Qatar Airways","Doha","DOH","13:35","G27","T3","B787-9","On time"],
+["TK1886","Turkish Airlines","Istanbul","IST","13:45","D32","T1","A321neo","Delayed 15 min"],
+["OS87","Austrian","New York","JFK","13:55","G36","T3","B787-9","Gate open"],
+["W42801","Wizz Air","Barcelona","BCN","14:05","C28","T1","A321neo","On time"],
+["EI661","Aer Lingus","Dublin","DUB","14:15","D18","T1","A320","On time"],
+["AC887","Air Canada","Toronto","YYZ","14:25","G33","T3","B787-9","On time"],
+["OS431","Austrian","Paris","CDG","14:35","F22","T3","A320neo","On time"],
+["SN2906","Brussels Airlines","Brussels","BRU","14:45","C15","T1","A319","On time"],
+["EW9751","Eurowings","Düsseldorf","DUS","14:55","C11","T1","A320","Gate change"],
+["A3863","Aegean","Athens","ATH","15:05","D14","T1","A321neo","On time"],
+["OS65","Austrian","Chicago","ORD","15:20","G34","T3","B787-9","On time"],
+["IB798","Iberia","Madrid","MAD","15:30","C25","T1","A320neo","On time"],
+["LO226","LOT","Warsaw","WAW","15:40","F08","T3","E195-E2","On time"],
+["JU311","Air Serbia","Belgrade","BEG","15:50","D16","T1","A319","On time"],
+["OS721","Austrian","Belgrade","BEG","16:00","F12","T3","A320","On time"],
+["PC904","Pegasus","Istanbul SAW","SAW","16:15","D30","T1","A321neo","Delayed 40 min"]
+].map((x,i)=>({id:i+1,no:x[0],airline:x[1],to:x[2],iata:x[3],time:x[4],gate:x[5],terminal:x[6],aircraft:x[7],status:x[8],stand:"P"+String(20+i),pax:80+(i*17)%190}));
 
-function makeState(){
- const ps=[]; let num=1;
- flights.forEach((f,fi)=>{
-   const count=f.aircraft==="B787-9"?14:7;
-   for(let i=0;i<count;i++){
-     const fn=firstNames[(fi*3+i)%firstNames.length],ln=lastNames[(fi*5+i)%lastNames.length];
-     const cls=f.aircraft==="B787-9"?(i%8===0?"Business":i%5===0?"Premium Economy":"Economy"):(i%9===0?"Business":"Economy");
-     const fare=cls==="Business"?"Business Classic":(i%4===0?"Economy Light":"Economy Classic");
-     const pnr=("A"+String(10000+num).slice(-5)).slice(0,6);
-     const docIssue=i%13===0?"Visa check":i%17===0?"Passport expiry":"OK";
-     const ssr=i%19===0?["WCHR"]:i%23===0?["UMNR"]:i%29===0?["PETC"]:i%31===0?["SPEQ"]:[];
-     ps.push({
-       id:num,pnr,name:`${fn} ${ln}`,first:fn,last:ln,ticket:`257-${String(4000000000+num)}`,
-       flight:f.number,destination:f.destination,iata:f.iata,class:cls,fare,status:(i<2&&fi<3)?"Checked-in":"Open",
-       seat:(i<2&&fi<3)?autoSeat(f.aircraft,num):"",nationality:["AT","DE","CH","IT","FR","NL","GB","US"][num%8],
-       passport:`P${String(7000000+num)}`,dob:`${String(1+num%27).padStart(2,"0")}.${String(1+num%12).padStart(2,"0")}.${1970+num%35}`,
-       docIssue,ssr,bags:[],frequent:i%11===0?"HON Circle":i%7===0?"Senator":i%5===0?"Frequent Traveller":"None",
-       connection:i%6===0?["OS"+(700+num%60),["PRG","KRK","TIA","SKP"][num%4]]:null,
-       phone:`+43 660 ${String(1000000+num)}`,email:`${fn.toLowerCase()}.${ln.toLowerCase()}@example.com`,
-       checkedAt:null,boardingPass:false
-     }); num++;
-   }
- });
- // seed some checked bags
- ps.filter(p=>p.status==="Checked-in").forEach((p,i)=>p.bags=[{tag:`OS${String(600000+i)}`,weight:18+(i%5),type:"Standard",fee:0}]);
- return {passengers:ps,transactions:[],activePassengerId:null,counter:"351",created:Date.now()};
+const serviceTemplates=[
+ {type:"Gate",q:"Wo ist mein Gate?",detail:"Passagier sucht den Weg zu seinem Abfluggate."},
+ {type:"Flight",q:"Hat mein Flug Verspätung?",detail:"Flugstatus und Gate müssen geprüft werden."},
+ {type:"Train",q:"Wie komme ich mit dem Zug nach Wien?",detail:"Bahn/CAT-Verbindungen erklären."},
+ {type:"Baggage",q:"Wo ist die Gepäckausgabe?",detail:"Ankunft, Belt und Wegbeschreibung."},
+ {type:"Lounge",q:"Welche Lounge kann ich benutzen?",detail:"Lounge-Information und Weg zeigen."},
+ {type:"Shop",q:"Wo finde ich Duty Free / einen Supermarkt?",detail:"Store suchen und am Display zeigen."},
+ {type:"Hotel",q:"Gibt es ein Hotel direkt am Flughafen?",detail:"Hotel-/Airport-City-Information."},
+ {type:"Connection",q:"Wie komme ich zu meinem Anschlussflug?",detail:"Transferbereich und Gatebereich erklären."},
+ {type:"Taxi",q:"Wo finde ich Taxi oder Mietwagen?",detail:"Ankunftshalle / Landside erklären."},
+ {type:"Security",q:"Wo ist die Sicherheitskontrolle und wie lange dauert es?",detail:"Terminalbereich und aktuelle Wartezeit zeigen."}
+];
+
+const directory=[
+ {cat:"Lounge",name:"Vienna Lounge",loc:"Terminal 2 / nach Security",desc:"Lounge mit Ruhe-, Arbeits- und Gastrobereichen."},
+ {cat:"Lounge",name:"SKY Lounge",loc:"Terminal 3",desc:"Lounge für berechtigte Passagiere."},
+ {cat:"Shop",name:"Heinemann Duty Free",loc:"Terminal 2 / Airside",desc:"Duty Free, Beauty, Spirituosen und Reiseartikel."},
+ {cat:"Shop",name:"Billa",loc:"Terminal 1 / landside",desc:"Lebensmittel und Reiseproviant."},
+ {cat:"Food",name:"Trzesniewski",loc:"Terminal 2",desc:"Wiener Brötchen und Snacks."},
+ {cat:"Food",name:"Wiener Café",loc:"Terminalbereich",desc:"Kaffee, Mehlspeisen und Wiener Atmosphäre."},
+ {cat:"Hotel",name:"Airport Hotel One",loc:"Airport City / 4 Min.",desc:"Fiktives Business-Hotel für die Simulation."},
+ {cat:"Hotel",name:"Vienna Sky Hotel",loc:"Airport City / 6 Min.",desc:"Fiktives Premium-Hotel mit Shuttle."},
+ {cat:"Service",name:"Airport Service Desk",loc:"Terminal 1, Terminal 3, Arrivals",desc:"Flughafenservice und allgemeine Auskünfte."}
+];
+
+const transport=[
+ {name:"S-Bahn / Railjet",where:"Bahnhof unter dem Terminal",next:"ca. alle 15–30 Min.",desc:"Verbindungen nach Wien und in andere Städte."},
+ {name:"City Airport Train",where:"Airport railway station",next:"Direktverbindung",desc:"Schnelle Verbindung Wien Mitte."},
+ {name:"Vienna Airport Lines",where:"Bus-Terminal landside",next:"mehrere Linien",desc:"Busverbindungen nach Wien."},
+ {name:"Taxi",where:"Vor der Ankunftshalle",next:"laufend",desc:"Offizieller Taxistand."},
+ {name:"Car Rental",where:"Car Rental Center",next:"geöffnet",desc:"Mehrere Mietwagenanbieter."},
+ {name:"Parking",where:"P3 / P4 / Kurzparken",next:"verfügbar",desc:"Parkhäuser und Kurzparkbereiche."}
+];
+
+function seed(){
+ return {
+   flights,
+   services:[
+    {id:1,name:"M. Berger",type:"Gate",question:"Wo ist Gate F24 für OS965?",flight:"OS965",status:"Waiting"},
+    {id:2,name:"S. Novak",type:"Train",question:"Wie komme ich nach Wien Mitte?",flight:"",status:"Waiting"},
+    {id:3,name:"J. Brown",type:"Connection",question:"Transfer von EK126 auf OS721",flight:"EK126",status:"Waiting"}
+   ],
+   incidents:[
+    {id:1,level:"High",title:"Gate change EW9751",area:"C Gates",text:"Gate C11 → C09 kommunizieren.",status:"Open"},
+    {id:2,level:"Medium",title:"Security queue T1",area:"Terminal 1",text:"Wartezeit auf 18 Minuten gestiegen.",status:"Open"},
+    {id:3,level:"Low",title:"Escalator maintenance",area:"Arrivals",text:"Rolltreppe 2 außer Betrieb, Lift verfügbar.",status:"Open"}
+   ],
+   activeService:null,
+   resolvedServices:0,
+   resolvedIncidents:0,
+   displayCount:0
+ };
 }
-function autoSeat(ac,n){const rows=ac==="B787-9"?35:28;return `${2+(n%(rows-1))}${["A","B","C","D","E","F"][n%6]}`}
-let state=load();
-function load(){try{return JSON.parse(localStorage.getItem(STORE))||makeState()}catch(e){return makeState()}}
-function save(){localStorage.setItem(STORE,JSON.stringify(state));renderAll();broadcastSnapshot()}
-function euro(v){return new Intl.NumberFormat("de-AT",{style:"currency",currency:"EUR"}).format(v||0)}
-function flight(n){return flights.find(f=>f.number===n)}
-function activeP(){return state.passengers.find(p=>p.id===state.activePassengerId)}
-function allowance(p){
- if(p.class==="Business")return {pieces:p.fare==="Business Comfort"?1:2,kg:32};
- if(p.class==="Premium Economy")return {pieces:p.fare.includes("Light")?1:2,kg:23};
- if(p.fare.includes("Light"))return {pieces:0,kg:23};
- return {pieces:1,kg:23};
+let state;try{state=JSON.parse(localStorage.getItem(STORE))||seed()}catch(e){state=seed()}
+function save(){localStorage.setItem(STORE,JSON.stringify(state));renderAll()}
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),1900)}
+function send(p){p.ts=Date.now();state.displayCount++;localStorage.setItem("viePassengerDisplayV1",JSON.stringify(p));try{window.vch??=new BroadcastChannel("vie-passenger-display-v1");window.vch.postMessage(p)}catch(e){}}
+function displayAds(){send({mode:"ads"})}
+function displayWelcome(){send({mode:"welcome"})}
+function displayDepartures(){send({mode:"departures",flights:state.flights.slice(0,10)})}
+function view(v){$$("nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===v));$$(".view").forEach(x=>x.classList.remove("active"));$("#view-"+v).classList.add("active")}
+function renderAll(){
+ const delayed=state.flights.filter(f=>f.status.includes("Delayed")).length,openInc=state.incidents.filter(i=>i.status==="Open").length,waiting=state.services.filter(s=>s.status==="Waiting").length;
+ $("#sDep").textContent=state.flights.length;$("#sDelay").textContent=delayed;$("#sInc").textContent=openInc;$("#sServ").textContent=waiting;$("#sSec").textContent="11";$("#sBelt").textContent="8";
+ $("#serviceBadge").textContent=waiting;$("#incidentBadge").textContent=openInc;
+ const rows=f=>`<table class="table"><thead><tr><th>Time</th><th>Flight</th><th>Airline</th><th>Destination</th><th>Gate</th><th>Terminal</th><th>Status</th></tr></thead><tbody>${f.map(x=>`<tr><td><b>${x.time}</b></td><td>${x.no}</td><td>${x.airline}</td><td>${x.to} (${x.iata})</td><td>${x.gate}</td><td>${x.terminal}</td><td><span class="status ${x.status.includes("Delayed")?"bad":x.status==="Boarding"?"warn":x.status==="Gate change"?"goldstatus":"ok"}">${x.status}</span></td></tr>`).join("")}</tbody></table>`;
+ $("#opsFlights").innerHTML=rows(state.flights.slice(0,9));$("#flightTable").innerHTML=rows(state.flights);
+ $("#opsServices").innerHTML=state.services.filter(s=>s.status==="Waiting").slice(0,4).map(s=>`<div class="queueitem"><div><strong>${s.name}</strong><small>${s.question}</small></div><button class="btn" data-action="openService" data-id="${s.id}">Öffnen</button></div>`).join("")||`<div class="panelbody">Keine wartenden Servicefälle.</div>`;
+ $("#opsIncidents").innerHTML=state.incidents.filter(i=>i.status==="Open").slice(0,4).map(i=>`<div class="queueitem"><div><strong>${i.title}</strong><small>${i.area} · ${i.level}</small></div><span class="status ${i.level==="High"?"bad":i.level==="Medium"?"warn":"info"}">${i.level}</span></div>`).join("");
+ renderServices();renderIncidents();renderTerminal();renderDirectory();renderTransport();renderReports();
 }
-function showToast(t){const el=$("#toast");el.textContent=t;el.classList.add("show");clearTimeout(showToast.t);showToast.t=setTimeout(()=>el.classList.remove("show"),2200)}
-function updateClock(){const d=new Date();$("#clock").textContent=d.toLocaleString("de-AT",{weekday:"short",hour:"2-digit",minute:"2-digit",second:"2-digit"})}
-function switchView(v){$$(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===v));$$(".view").forEach(x=>x.classList.remove("active"));$(`#view-${v}`).classList.add("active");renderView(v)}
-function renderView(v){if(v==="flights")renderFlights();if(v==="passengers")renderPassengers();if(v==="baggage")renderBaggage();if(v==="seats")renderSeats();if(v==="special")renderSpecial();if(v==="transactions")renderTransactions();if(v==="stats")renderStats();if(v==="checkin")renderCheckin()}
-function renderAll(){renderDashboard();renderFlights();renderPassengers();renderCheckin();renderBaggage();renderSeats();renderSpecial();renderTransactions();renderStats()}
-function renderDashboard(){
- const open=state.passengers.filter(p=>p.status==="Open").length,checked=state.passengers.filter(p=>p.status==="Checked-in").length,bags=state.passengers.reduce((s,p)=>s+p.bags.length,0),fees=state.transactions.reduce((s,t)=>s+t.amount,0);
- $("#flightStat").textContent=flights.length;$("#openStat").textContent=open;$("#checkedStat").textContent=checked;$("#bagsStat").textContent=bags;$("#feesStat").textContent=euro(fees);$("#queueBadge").textContent=open;
- $("#dashboardFlights").innerHTML=`<table class="table"><thead><tr><th>Flug</th><th>Ziel</th><th>Zeit</th><th>Gate</th><th>Status</th></tr></thead><tbody>${flights.slice(0,8).map(f=>`<tr><td><strong>${f.number}</strong></td><td>${f.destination}</td><td>${f.time}</td><td>${f.gate}</td><td><span class="status ${f.status==="Boarding"?"warn":"ok"}">${f.status}</span></td></tr>`).join("")}</tbody></table>`;
- const q=state.passengers.filter(p=>p.status==="Open").slice(0,7);
- $("#dashboardQueue").innerHTML=q.map(p=>`<div class="cardhead"><div><h3>${p.name}</h3><p>${p.pnr} · ${p.flight} ${p.iata}</p></div><button class="ghost" data-action="openPassenger" data-id="${p.id}">Öffnen</button></div>`).join("");
+function renderServices(){
+ const q=state.services.filter(s=>s.status==="Waiting");
+ $("#serviceQueue").innerHTML=q.map(s=>`<div class="queueitem"><div><strong>${s.name}</strong><small>${s.type} · ${s.question}</small></div><button class="btn" data-action="openService" data-id="${s.id}">Öffnen</button></div>`).join("")||`<div class="panelbody">Keine wartenden Personen.</div>`;
+ const s=state.services.find(x=>x.id===state.activeService),w=$("#serviceWork");
+ if(!s){w.innerHTML=`<div class="panelbody">Noch keinen Servicefall geöffnet.</div>`;return}
+ let flightInfo=s.flight?state.flights.find(f=>f.no===s.flight):null;
+ w.innerHTML=`<div class="panelhead"><h2>${s.name} · ${s.type}</h2><span class="status info">${s.status}</span></div><div class="panelbody">
+ <div style="font-size:14px;font-weight:800;margin-bottom:14px">${s.question}</div>
+ <div class="details"><dl class="dl"><dt>Service</dt><dd>${s.type}</dd><dt>Flight</dt><dd>${s.flight||"–"}</dd><dt>Status</dt><dd>${s.status}</dd></dl>
+ <dl class="dl"><dt>Destination</dt><dd>${flightInfo?flightInfo.to:"–"}</dd><dt>Gate</dt><dd>${flightInfo?flightInfo.gate:"–"}</dd><dt>Terminal</dt><dd>${flightInfo?flightInfo.terminal:"–"}</dd></dl>
+ <dl class="dl"><dt>Flight status</dt><dd>${flightInfo?flightInfo.status:"–"}</dd><dt>Departure</dt><dd>${flightInfo?flightInfo.time:"–"}</dd><dt>Aircraft</dt><dd>${flightInfo?flightInfo.aircraft:"–"}</dd></dl></div>
+ <div class="actions"><button class="btn gold" data-action="showServiceAnswer">Info auf Display</button><button class="btn" data-action="showWayfinding">Weg anzeigen</button><button class="btn green" data-action="resolveService">Fall abschließen</button></div></div>`;
 }
-function renderFlights(){
- $("#flightBoard").innerHTML=flights.map(f=>{const pax=state.passengers.filter(p=>p.flight===f.number),ci=pax.filter(p=>p.status==="Checked-in").length;return `<div class="flightrow"><strong>${f.time}</strong><strong>${f.number}</strong><span>${f.destination} (${f.iata})</span><span>${f.gate}</span><span>${f.aircraft}</span><span class="status ${f.closed?"bad":f.status==="Boarding"?"warn":"ok"}">${f.closed?"Check-in closed":f.status} · ${ci}/${pax.length}</span></div>`}).join("");
+function openService(id){state.activeService=+id;save();view("services")}
+function newService(){
+ const t=serviceTemplates[Math.floor(Math.random()*serviceTemplates.length)],id=Math.max(0,...state.services.map(x=>x.id))+1,names=["A. Huber","M. Rossi","E. Wilson","L. Fischer","S. Gruber","J. Novak","C. Meyer"];
+ const fl=t.type==="Gate"||t.type==="Flight"||t.type==="Connection"?state.flights[Math.floor(Math.random()*state.flights.length)].no:"";
+ state.services.push({id,name:names[id%names.length],type:t.type,question:t.q,flight:fl,status:"Waiting"});save();toast("Neue Person am Service Desk");
 }
-function passengerCard(p){const f=flight(p.flight);return `<article class="card"><div class="cardhead"><div><h3>${p.name}</h3><p>${p.pnr} · ${p.ticket}</p></div><span class="status ${p.status==="Checked-in"?"ok":"warn"}">${p.status}</span></div><div class="cardbody"><dl class="data"><dt>Flug</dt><dd>${p.flight} · ${p.destination}</dd><dt>Abflug</dt><dd>${f.time} · Gate ${f.gate}</dd><dt>Klasse</dt><dd>${p.class}</dd><dt>Tarif</dt><dd>${p.fare}</dd></dl><dl class="data"><dt>Sitz</dt><dd>${p.seat||"–"}</dd><dt>Frequent Flyer</dt><dd>${p.frequent}</dd><dt>Dokument</dt><dd>${p.docIssue}</dd><dt>SSR</dt><dd>${p.ssr.join(", ")||"–"}</dd></dl><dl class="data"><dt>Gepäck</dt><dd>${p.bags.length} Stück</dd><dt>Nationalität</dt><dd>${p.nationality}</dd><dt>Anschluss</dt><dd>${p.connection?`${p.connection[0]} · ${p.connection[1]}`:"–"}</dd><dt>Status</dt><dd>${p.status}</dd></dl></div><div class="actions"><button class="primary" data-action="openPassenger" data-id="${p.id}">Im Check-in öffnen</button></div></article>`}
-function renderPassengers(filter=""){
- let l=state.passengers;const q=filter.toLowerCase().trim();if(q)l=l.filter(p=>JSON.stringify(p).toLowerCase().includes(q));
- $("#passengerList").innerHTML=l.slice(0,80).map(passengerCard).join("");
+function serviceAnswer(s){
+ const f=s.flight?state.flights.find(x=>x.no===s.flight):null;
+ const map={
+  Gate:{title:f?`Gate ${f.gate}`:"Gate information",big:f?`${f.no} · ${f.to}`:"Flight information",text:f?`${f.terminal} · Departure ${f.time} · ${f.status}`:"Please check your boarding pass."},
+  Flight:{title:"Flight status",big:f?`${f.no} · ${f.to}`:"Flight status",text:f?`${f.time} · Gate ${f.gate} · ${f.status}`:"Please ask our service team."},
+  Train:{title:"To Vienna city",big:"Railway station ↓",text:"Follow the train signs from Arrivals. Railjet, S-Bahn and CAT services depart from the airport station."},
+  Baggage:{title:"Baggage claim",big:"Arrivals · Baggage",text:"Follow the baggage claim signs after passport control. Check the monitors for your assigned belt."},
+  Lounge:{title:"Airport Lounges",big:"Vienna Lounge / SKY Lounge",text:"Please check eligibility with your airline or lounge access programme."},
+  Shop:{title:"Shopping",big:"Duty Free · Billa · Travel Retail",text:"Shopping is available landside and airside. Ask us for the nearest location."},
+  Hotel:{title:"Airport City",big:"Hotels near the terminal",text:"Several accommodation options are available around Airport City; follow landside hotel signs."},
+  Connection:{title:"Connecting flight",big:f?`${f.no} · ${f.to}`:"Transfer",text:f?`Follow Transfer signs, then proceed to ${f.gate}.`:"Follow the yellow Transfer signs and check the flight monitors."},
+  Taxi:{title:"Ground transport",big:"Taxi · Car Rental",text:"Taxi ranks are outside Arrivals. Car Rental is signposted from the arrivals level."},
+  Security:{title:"Security",big:"Current wait · 11 min",text:"Follow Security signs for your terminal. Keep boarding pass ready."}
+ };
+ return map[s.type]||{title:"Vienna Airport Service",big:"How can we help?",text:"Please follow the information provided by our service team."};
 }
-function renderCheckin(){
- const p=activeP(); const queue=state.passengers.filter(x=>x.status==="Open").slice(0,16);
- $("#checkinQueue").innerHTML=queue.map(x=>`<div class="cardhead"><div><h3>${x.name}</h3><p>${x.pnr} · ${x.flight} ${x.iata}</p></div><button class="ghost" data-action="openPassenger" data-id="${x.id}">Öffnen</button></div>`).join("");
- if(!p){$("#checkinWorkspace").className="panel empty";$("#checkinWorkspace").innerHTML="Noch kein Passagier geöffnet.";return}
- const f=flight(p.flight),al=allowance(p);$("#checkinWorkspace").className="panel";
- $("#checkinWorkspace").innerHTML=`<div class="panelhead"><div><span class="kicker">ACTIVE PNR</span><h2>${p.name} · ${p.pnr}</h2></div><span class="status ${p.status==="Checked-in"?"ok":"warn"}">${p.status}</span></div>
- <div class="formpanel">
-  <div class="grid3">
-   <dl class="data"><dt>Flug</dt><dd>${p.flight} · ${p.destination}</dd><dt>Abflug</dt><dd>${f.time}</dd><dt>Gate</dt><dd>${f.gate}</dd><dt>Zone</dt><dd>${f.zone}</dd></dl>
-   <dl class="data"><dt>Klasse</dt><dd>${p.class}</dd><dt>Tarif</dt><dd>${p.fare}</dd><dt>Freigepäck</dt><dd>${al.pieces} × ${al.kg} kg</dd><dt>Status</dt><dd>${p.frequent}</dd></dl>
-   <dl class="data"><dt>Pass</dt><dd>${p.passport}</dd><dt>Nationalität</dt><dd>${p.nationality}</dd><dt>Geburtsdatum</dt><dd>${p.dob}</dd><dt>Dokumentencheck</dt><dd>${p.docIssue}</dd></dl>
-  </div>
-  <div class="btnrow" style="margin-top:14px">
-   <button class="secondary" data-action="sendJourney">Auf Passagierdisplay</button>
-   <button class="ghost" data-action="openDocs">Dokumente prüfen</button>
-   <button class="ghost" data-view="seats">Sitzplatz</button>
-   <button class="ghost" data-action="openBag">Gepäck annehmen</button>
-   <button class="ghost" data-action="openUpgrade">Upgrade</button>
-   ${p.status!=="Checked-in"?`<button class="primary" data-action="completeCheckin">Check-in abschließen</button>`:`<button class="primary" data-action="showBoardingPass">Bordkarte anzeigen</button>`}
-  </div>
- </div>`;
+function showServiceAnswer(){const s=state.services.find(x=>x.id===state.activeService);if(!s)return;send({mode:"service",...serviceAnswer(s)});toast("Information auf Display")}
+function showWayfinding(){const s=state.services.find(x=>x.id===state.activeService);if(!s)return;const a=serviceAnswer(s);send({mode:"wayfinding",title:a.title,destination:a.big,text:a.text});toast("Weganzeige aktiviert")}
+function resolveService(){const s=state.services.find(x=>x.id===state.activeService);if(!s)return;s.status="Resolved";state.resolvedServices++;state.activeService=null;save();send({mode:"success",title:"Thank you",text:"Have a pleasant journey."});setTimeout(displayAds,2300);toast("Servicefall abgeschlossen")}
+function renderIncidents(){
+ $("#incidentList").innerHTML=state.incidents.map(i=>`<div class="panel incident ${i.level==="High"?"high":i.level==="Low"?"low":""}" style="margin-bottom:10px"><div class="panelhead"><div><h2>${i.title}</h2><small style="font-size:8px;color:#777">${i.area}</small></div><span class="status ${i.status==="Resolved"?"ok":i.level==="High"?"bad":"warn"}">${i.status}</span></div><div class="panelbody"><div style="font-size:9px">${i.text}</div><div class="actions">${i.status==="Open"?`<button class="btn gold" data-action="broadcastIncident" data-id="${i.id}">Auf Display kommunizieren</button><button class="btn green" data-action="resolveIncident" data-id="${i.id}">Lösen</button>`:""}</div></div></div>`).join("");
 }
-function openPassenger(id){state.activePassengerId=+id;switchView("checkin");save();sendJourney()}
-function searchCheckin(){const q=$("#checkinSearch").value.trim().toLowerCase();const p=state.passengers.find(x=>[x.pnr,x.name,x.ticket].some(v=>String(v).toLowerCase().includes(q)));if(!p)return showToast("Keine Buchung gefunden");openPassenger(p.id)}
-function openDocs(){const p=activeP();openModal(`<h2>Dokumentenprüfung</h2><p>${p.name} · ${p.flight} ${p.iata}</p><div class="formgrid"><div class="field"><label>Reisedokument</label><select id="docType"><option>Reisepass</option><option>Personalausweis</option></select></div><div class="field"><label>Dokumentnummer</label><input value="${p.passport}"></div><div class="field"><label>Nationalität</label><input value="${p.nationality}"></div><div class="field"><label>Prüfergebnis</label><select id="docResult"><option>OK</option><option>Visa check</option><option>Manual verification</option></select></div></div><div class="modalactions"><button class="ghost" data-action="closeModal">Abbrechen</button><button class="primary" data-action="saveDocs">Bestätigen</button></div>`)}
-function saveDocs(){const p=activeP();p.docIssue=$("#docResult").value;save();closeModal();showToast("Dokumentenprüfung gespeichert")}
-function renderSeats(){
- const p=activeP();if(!p){$("#seatView").className="panel empty";$("#seatView").innerHTML="Kein aktiver Passagier.";return}
- const f=flight(p.flight),rows=f.aircraft==="B787-9"?35:28,occupied=new Set(state.passengers.filter(x=>x.flight===p.flight&&x.seat&&x.id!==p.id).map(x=>x.seat));
- let html=`<div class="panelhead"><div><span class="kicker">${f.aircraft}</span><h2>${p.flight} · ${p.name}</h2></div><strong>Sitz ${p.seat||"–"}</strong></div><div class="seatmap">`;
- for(let r=2;r<=rows;r++){["A","B","C"].forEach(l=>{const s=r+l;html+=`<button class="seat ${occupied.has(s)?"occupied":p.seat===s?"selected":""}" ${occupied.has(s)?"disabled":""} data-action="selectSeat" data-seat="${s}">${s}</button>`});html+=`<span class="aisle"></span>`;["D","E","F"].forEach(l=>{const s=r+l;html+=`<button class="seat ${occupied.has(s)?"occupied":p.seat===s?"selected":""}" ${occupied.has(s)?"disabled":""} data-action="selectSeat" data-seat="${s}">${s}</button>`})}
- html+=`</div>`;$("#seatView").className="panel";$("#seatView").innerHTML=html
+function newIncident(){const list=[["High","Baggage belt interruption","Arrivals","Belt 6 steht vorübergehend, Gepäck wird auf Belt 7 umgeleitet."],["Medium","Gate congestion","F Gates","Hohe Passagierdichte bei F20–F24."],["Medium","Security waiting time","Terminal 3","Wartezeit steigt auf 16 Minuten."],["Low","Lift maintenance","Terminal 1","Lift 4 außer Betrieb, alternativer Lift ausgeschildert."],["High","Gate change","G Gates","Kurzfristige Gate-Änderung für einen Langstreckenflug."]];const x=list[Math.floor(Math.random()*list.length)],id=Math.max(0,...state.incidents.map(i=>i.id))+1;state.incidents.push({id,level:x[0],title:x[1],area:x[2],text:x[3],status:"Open"});save();toast("Neue operative Störung")}
+function broadcastIncident(id){const i=state.incidents.find(x=>x.id===+id);send({mode:"alert",level:i.level,title:i.title,text:i.text,area:i.area});toast("Störung auf Display")}
+function resolveIncident(id){const i=state.incidents.find(x=>x.id===+id);i.status="Resolved";state.resolvedIncidents++;save();send({mode:"success",title:"Information updated",text:`${i.title} resolved`});setTimeout(displayAds,2200)}
+function renderTerminal(){
+ const zones=[["Terminal 1",68,14],["Terminal 3",74,9],["C Gates",55,8],["D Gates",61,11],["F Gates",79,13],["G Gates",70,10],["Arrivals",66,7],["Security T1",82,18],["Security T3",63,11],["Baggage Claim",58,6],["Railway Station",49,4],["Airport City",43,3]];
+ $("#terminalGrid").innerHTML=zones.map(z=>`<div class="zone"><b>${z[0]}</b><span>Load ${z[1]}% · Wait ${z[2]} min</span><div class="bar"><i style="width:${z[1]}%"></i></div></div>`).join("");
 }
-function selectSeat(s){const p=activeP();p.seat=s;save();renderSeats();sendJourney();showToast(`Sitz ${s} gewählt`)}
-function openBag(){const p=activeP(),al=allowance(p);openModal(`<h2>Gepäck annehmen</h2><p>${p.name} · Freigepäck ${al.pieces} × ${al.kg} kg</p><div class="formgrid"><div class="field"><label>Gewicht</label><input id="bagWeight" type="number" step="0.1" value="18.0"></div><div class="field"><label>Art</label><select id="bagType"><option>Standard</option><option>Sportgepäck</option><option>Kinderwagen</option><option>Priority</option></select></div></div><div id="bagCalc" style="margin-top:12px;font-size:10px"></div><div class="modalactions"><button class="secondary" data-action="previewBag">Auf Display wiegen</button><button class="ghost" data-action="closeModal">Abbrechen</button><button class="primary" data-action="addBag">Gepäck übernehmen</button></div>`);previewBag()}
-function bagFee(p,w){const al=allowance(p);if(w>32)return {fee:0,reject:true,text:"Über 32 kg – am Check-in nicht akzeptierbar"};const pieceNo=p.bags.length+1;if(pieceNo>al.pieces)return {fee:65,reject:false,text:"Zusätzliches Gepäckstück"};if(w>al.kg)return {fee:55,reject:false,text:"Übergewicht"};return {fee:0,reject:false,text:"Innerhalb Freigepäck"}}
-function previewBag(){const p=activeP(),w=parseFloat($("#bagWeight")?.value)||0,r=bagFee(p,w);if($("#bagCalc"))$("#bagCalc").innerHTML=`<strong>${w.toFixed(1)} kg</strong> · ${r.text}${r.fee?` · <b>${euro(r.fee)}</b>`:""}`;sendDisplay({mode:"baggage",passenger:p.name,weight:w,allowance:allowance(p),result:r})}
-function addBag(){const p=activeP(),w=parseFloat($("#bagWeight").value)||0,r=bagFee(p,w);if(r.reject)return showToast("Gepäck über 32 kg nicht akzeptiert");const tag=`OS${String(700000+state.passengers.reduce((s,x)=>s+x.bags.length,0))}`;p.bags.push({tag,weight:w,type:$("#bagType").value,fee:r.fee});if(r.fee)state.transactions.push({time:new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"}),passenger:p.name,pnr:p.pnr,type:r.text,amount:r.fee});save();closeModal();showToast(`Bag Tag ${tag} erstellt`)}
-function openUpgrade(){const p=activeP();const f=flight(p.flight);const available=p.class==="Economy"?(f.aircraft==="B787-9"?["Premium Economy","Business"]:["Business"]):[];if(!available.length)return showToast("Kein Upgrade verfügbar");openModal(`<h2>Upgrade</h2><p>${p.name} · aktuell ${p.class}</p><div class="field"><label>Zielklasse</label><select id="upgradeClass">${available.map(x=>`<option>${x}</option>`).join("")}</select></div><div class="field" style="margin-top:10px"><label>Preis</label><input id="upgradePrice" type="number" value="${f.aircraft==="B787-9"?349:179}"></div><div class="modalactions"><button class="secondary" data-action="previewUpgrade">Auf Display anzeigen</button><button class="ghost" data-action="closeModal">Abbrechen</button><button class="primary" data-action="confirmUpgrade">Upgrade buchen</button></div>`)}
-function previewUpgrade(){const p=activeP(),to=$("#upgradeClass").value,price=+$("#upgradePrice").value;sendDisplay({mode:"offer",title:"Upgrade verfügbar",passenger:p.name,text:`Upgrade auf ${to}`,amount:price})}
-function confirmUpgrade(){const p=activeP(),to=$("#upgradeClass").value,price=+$("#upgradePrice").value;p.class=to;p.fare=to==="Business"?"Business Classic":"Premium Economy Classic";state.transactions.push({time:new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"}),passenger:p.name,pnr:p.pnr,type:`Upgrade ${to}`,amount:price});save();closeModal();showToast("Upgrade gebucht")}
-function completeCheckin(){const p=activeP(),f=flight(p.flight);if(f.closed)return showToast("Check-in für diesen Flug geschlossen");if(p.docIssue!=="OK")return showToast("Dokumentenprüfung noch offen");if(!p.seat)return showToast("Zuerst Sitzplatz vergeben");p.status="Checked-in";p.checkedAt=new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"});p.boardingPass=true;save();showBoardingPass();showToast("Check-in abgeschlossen")}
-function showBoardingPass(){const p=activeP(),f=flight(p.flight);sendDisplay({mode:"boarding",p:{name:p.name,flight:p.flight,to:p.destination,iata:p.iata,time:f.time,gate:f.gate,seat:p.seat,class:p.class,boarding:boardingTime(f.time),pnr:p.pnr}});openModal(`<h2>Boarding Pass</h2><p>${p.name}</p><div class="grid3"><dl class="data"><dt>Flight</dt><dd>${p.flight}</dd><dt>To</dt><dd>${p.destination}</dd><dt>Gate</dt><dd>${f.gate}</dd></dl><dl class="data"><dt>Seat</dt><dd>${p.seat}</dd><dt>Class</dt><dd>${p.class}</dd><dt>Boarding</dt><dd>${boardingTime(f.time)}</dd></dl><dl class="data"><dt>PNR</dt><dd>${p.pnr}</dd><dt>Bags</dt><dd>${p.bags.length}</dd><dt>Status</dt><dd>Checked-in</dd></dl></div><div class="modalactions"><button class="secondary" data-action="sendBoarding">Auf Display</button><button class="primary" data-action="closeModal">Fertig</button></div>`)}
-function boardingTime(t){let [h,m]=t.split(":").map(Number);m-=35;if(m<0){m+=60;h--}return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`}
-function sendJourney(){const p=activeP();if(!p)return;const f=flight(p.flight);sendDisplay({mode:"journey",p:{name:p.name,flight:p.flight,to:p.destination,iata:p.iata,time:f.time,gate:f.gate,seat:p.seat||"Noch offen",class:p.class,bags:p.bags.length,connection:p.connection}})}
-function sendBoarding(){showBoardingPass();closeModal()}
-function sendDisplay(payload){payload.timestamp=Date.now();localStorage.setItem("austrianPassengerDisplay",JSON.stringify(payload));try{if(!window.osChannel)window.osChannel=new BroadcastChannel("austrian-checkin-display");window.osChannel.postMessage(payload)}catch(e){}}
-function renderBaggage(){const list=state.passengers.filter(p=>p.bags.length);$("#baggageList").innerHTML=list.length?list.map(p=>`<article class="card"><div class="cardhead"><div><h3>${p.name} · ${p.flight}</h3><p>${p.pnr}</p></div><span>${p.bags.length} bag(s)</span></div><div class="formpanel">${p.bags.map(b=>`<div class="bagrow"><span>${b.tag} · ${b.type}</span><strong>${b.weight.toFixed(1)} kg</strong><span>${b.fee?euro(b.fee):"Included"}</span><span class="status ok">Accepted</span></div>`).join("")}</div></article>`).join(""):`<div class="panel empty">Noch kein Gepäck erfasst.</div>`}
-function renderSpecial(){const l=state.passengers.filter(p=>p.ssr.length);$("#specialList").innerHTML=l.map(p=>`<article class="card"><div class="cardhead"><div><h3>${p.name}</h3><p>${p.flight} ${p.iata} · ${p.pnr}</p></div><span class="status warn">${p.ssr.join(", ")}</span></div><div class="cardbody"><dl class="data"><dt>SSR</dt><dd>${p.ssr.join(", ")}</dd><dt>Status</dt><dd>${p.status}</dd></dl><dl class="data"><dt>Telefon</dt><dd>${p.phone}</dd><dt>Dokument</dt><dd>${p.docIssue}</dd></dl><dl class="data"><dt>Sitz</dt><dd>${p.seat||"–"}</dd><dt>Gepäck</dt><dd>${p.bags.length}</dd></dl></div><div class="actions"><button class="primary" data-action="openPassenger" data-id="${p.id}">Öffnen</button></div></article>`).join("")}
-function renderTransactions(){$("#transactionList").innerHTML=state.transactions.length?state.transactions.slice().reverse().map(t=>`<article class="card"><div class="cardhead"><div><h3>${t.passenger}</h3><p>${t.time} · ${t.pnr} · ${t.type}</p></div><strong class="money">${euro(t.amount)}</strong></div></article>`).join(""):`<div class="panel empty">Noch keine Zahlungen.</div>`}
-function renderStats(){const checked=state.passengers.filter(p=>p.status==="Checked-in"),bags=state.passengers.reduce((s,p)=>s+p.bags.length,0),kg=state.passengers.reduce((s,p)=>s+p.bags.reduce((a,b)=>a+b.weight,0),0),fees=state.transactions.reduce((s,t)=>s+t.amount,0);$("#statsView").innerHTML=[["Passagiere",state.passengers.length,"im Datensatz"],["Checked-in",checked.length,`${Math.round(checked.length/state.passengers.length*100)}%`],["Gepäckstücke",bags,`${kg.toFixed(1)} kg gesamt`],["Gebühren",euro(fees),"simuliert"],["SSR Fälle",state.passengers.filter(p=>p.ssr.length).length,"Special Services"],["Dokumentenfälle",state.passengers.filter(p=>p.docIssue!=="OK").length,"noch zu prüfen"]].map(x=>`<article class="stat"><span>${x[0]}</span><strong>${x[1]}</strong><small>${x[2]}</small></article>`).join("")}
-function searchPassengers(){renderPassengers($("#passengerSearch").value)}
-function generateQueue(){const open=state.passengers.filter(p=>p.status==="Open");open.sort(()=>Math.random()-.5);showToast("Warteschlange neu gemischt");renderDashboard();renderCheckin()}
-function openModal(h){$("#modal").innerHTML=h;$("#modalbg").classList.remove("hidden")}
-function closeModal(){$("#modalbg").classList.add("hidden")}
-function broadcastSnapshot(){const snap={mode:"idle",stats:{flights:flights.length,open:state.passengers.filter(p=>p.status==="Open").length,checked:state.passengers.filter(p=>p.status==="Checked-in").length,bags:state.passengers.reduce((s,p)=>s+p.bags.length,0)}};localStorage.setItem("austrianOpsSnapshot",JSON.stringify(snap))}
-function handle(btn){
- const a=btn.dataset.action,id=btn.dataset.id,seat=btn.dataset.seat;
- const m={openPassenger:()=>openPassenger(id),searchCheckin,searchPassengers,openDocs,saveDocs,openBag,previewBag,addBag,openUpgrade,previewUpgrade,confirmUpgrade,completeCheckin,showBoardingPass,sendJourney,sendBoarding,selectSeat:()=>selectSeat(seat),generateQueue,closeModal};
- if(m[a])m[a]()
-}
-document.addEventListener("click",e=>{
- const v=e.target.closest("[data-view]");if(v){e.preventDefault();switchView(v.dataset.view);return}
- const b=e.target.closest("[data-action]");if(b){e.preventDefault();handle(b)}
-});
+function renderDirectory(){$("#directoryList").innerHTML=directory.map(d=>`<div class="panel"><div class="panelhead"><h2>${d.name}</h2><span class="status goldstatus">${d.cat}</span></div><div class="panelbody"><div style="font-size:9px;font-weight:700">${d.loc}</div><p style="font-size:8px;color:#748078;line-height:1.5">${d.desc}</p><button class="btn" data-action="showDirectory" data-name="${d.name}">Auf Display</button></div></div>`).join("")}
+function showDirectory(name){const d=directory.find(x=>x.name===name);send({mode:"service",title:d.cat,big:d.name,text:`${d.loc} · ${d.desc}`})}
+function renderTransport(){$("#transportList").innerHTML=transport.map(t=>`<div class="panel"><div class="panelhead"><h2>${t.name}</h2></div><div class="panelbody"><dl class="dl"><dt>Location</dt><dd>${t.where}</dd><dt>Service</dt><dd>${t.next}</dd></dl><p style="font-size:8px;color:#748078">${t.desc}</p><button class="btn" data-action="showTransport" data-name="${t.name}">Auf Display</button></div></div>`).join("")}
+function showTransport(name){const t=transport.find(x=>x.name===name);send({mode:"service",title:"Ground transport",big:t.name,text:`${t.where} · ${t.desc}`})}
+function renderReports(){$("#reportGrid").innerHTML=[["Resolved services",state.resolvedServices],["Resolved incidents",state.resolvedIncidents],["Display interactions",state.displayCount],["Flights",state.flights.length],["Delayed",state.flights.filter(f=>f.status.includes("Delayed")).length],["Open services",state.services.filter(s=>s.status==="Waiting").length]].map(x=>`<div class="stat"><small>${x[0]}</small><strong>${x[1]}</strong></div>`).join("")}
+function modal(h){$("#modal").innerHTML=h;$("#modalbg").classList.remove("hidden")}function closeModal(){$("#modalbg").classList.add("hidden")}
+function handle(b){const a=b.dataset.action,id=b.dataset.id,name=b.dataset.name;({newService,newIncident,openService:()=>openService(id),showServiceAnswer,showWayfinding,resolveService,broadcastIncident:()=>broadcastIncident(id),resolveIncident:()=>resolveIncident(id),showDirectory:()=>showDirectory(name),showTransport:()=>showTransport(name),displayAds,displayWelcome,displayDepartures,closeModal}[a]||(()=>{}))()}
+document.addEventListener("click",e=>{const v=e.target.closest("[data-view]");if(v){view(v.dataset.view);return}const b=e.target.closest("[data-action]");if(b)handle(b)});
 $("#modalbg").addEventListener("click",e=>{if(e.target===$("#modalbg"))closeModal()});
-$("#checkinSearch").addEventListener("keydown",e=>{if(e.key==="Enter")searchCheckin()});
-$("#passengerSearch").addEventListener("keydown",e=>{if(e.key==="Enter")searchPassengers()});
-$("#openDisplay").addEventListener("click",()=>window.open("passenger-display.html","AustrianPassengerDisplay","width=1280,height=800"));
-function init(){updateClock();setInterval(updateClock,1000);renderAll();broadcastSnapshot()}
-init();
+$("#openDisplay").addEventListener("click",()=>window.open("passenger-display.html?v=1","VIE_PASSENGER_DISPLAY","width=1280,height=800"));
+setInterval(()=>$("#clock").textContent=new Date().toLocaleString("de-AT",{hour:"2-digit",minute:"2-digit",second:"2-digit"}),1000);
+renderAll();displayAds();
+})();
 </script>
 </body>
 </html>

@@ -1,51 +1,29 @@
-# Austrian Airlines – Vienna Check-in Simulator
+# Vienna Airport Operations Center V1
 
-Private browser-based simulation of an Austrian Airlines check-in counter at Vienna Airport.
+A complex fictional browser simulator inspired by Vienna Airport's green/gold passenger-experience direction.
 
-## Included
+Main application:
+- live operations dashboard
+- 24 departure flights from multiple airlines
+- gates, terminals, stands, aircraft and flight status
+- passenger-service queue
+- service questions about flights, gates, train, baggage, lounges, shops, hotels, connections, taxi and security
+- send answers and wayfinding to a second passenger display
+- operational incident management
+- incident broadcasts to the second display
+- terminal flow / waiting-time overview
+- ground transport directory
+- lounge / shop / hotel / service directory
+- shift reporting
 
-- 24 Austrian flight records
-- roughly 200 generated fictional passengers
-- PNR, ticket number and passenger search
-- Economy, Premium Economy and Business
-- fare families including Light / Classic
-- frequent-flyer statuses
-- document verification
-- passport and visa-check cases
-- seat assignment with seat map
-- checked baggage and baggage tags
-- baggage allowance logic
-- excess baggage / extra-piece simulation
-- maximum 32 kg acceptance check
-- upgrade offers
-- special service requests (SSR)
-- connections
-- check-in closing status
-- boarding pass simulation
-- payments / fees
-- shift statistics
-- dedicated passenger-facing second display
-
-## Second display
-
-Open `passenger-display.html` using the button in the sidebar and move it to the second monitor.
-
-The display can show:
+Second display:
+- rotating advertising by default
+- simulated ads for airlines, hotels, stores and Vienna
 - welcome screen
-- passenger itinerary
-- flight / gate / seat
-- baggage weight and excess fee
-- upgrade offer
-- boarding pass summary
+- passenger service information
+- animated wayfinding screen
+- short success screen
+- operational alert / disruption screen
+- departures board
 
-For the most reliable synchronization, run both pages on the same GitHub Pages site.
-
-## GitHub Pages
-
-Upload all files into the repository root and enable:
-
-Settings → Pages → Deploy from a branch → main → /(root)
-
-## Important
-
-All passenger, booking and ticket data are fictional. The simulator is not connected to Austrian Airlines, Lufthansa Group, Vienna Airport, any real departure-control system, or live airline systems.
+All airline, hotel and retail advertising cards are simulation content and are not official advertising material.
