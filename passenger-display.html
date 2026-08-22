@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Austrian Passenger Display</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#111;color:#fff;overflow:hidden}
+body{background-image:linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,.18)),url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=2400&q=90');background-size:cover;background-position:center}
+.screen{position:absolute;inset:0;padding:6vh 7vw;display:none}.screen.active{display:flex;flex-direction:column;justify-content:space-between}
+.brand{font-size:1.5vw;font-weight:800}.brand b{display:inline-block;background:#d71920;color:#fff;padding:.5vw .65vw;border-radius:.45vw;margin-right:.7vw}.headline{font-size:4.6vw;line-height:1.04;font-weight:750;max-width:75vw}.sub{font-size:1.35vw;line-height:1.55;max-width:66vw;opacity:.88;margin-top:1.5vw}.footer{display:flex;justify-content:space-between;font-size:1vw;opacity:.76}
+.card{background:#fff;color:#20242a;border-radius:1.2vw;padding:3vw;box-shadow:0 2vw 6vw rgba(0,0,0,.25)}.route{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:3vw}.airport{font-size:5vw;font-weight:800}.airport.right{text-align:right}.arrow{font-size:3vw;color:#d71920}.details{display:grid;grid-template-columns:repeat(5,1fr);gap:1vw;margin-top:3vw}.detail{border-top:1px solid #ddd;padding-top:1.2vw}.detail span{display:block;color:#737b84;font-size:.9vw;text-transform:uppercase}.detail strong{font-size:1.6vw;display:block;margin-top:.45vw}
+.bagwrap{display:grid;place-items:center;height:100%}.bag{background:#fff;color:#222;border-radius:1.4vw;padding:3.5vw 5vw;text-align:center;min-width:55vw}.weight{font-size:7vw;font-weight:800}.good{color:#2f7d59}.warn{color:#b97b22}.bad{color:#b33a3a}.amount{font-size:3.2vw;font-weight:800;margin-top:1vw}
+.boarding{background:#fff;color:#1c2126}.bp{border:1px solid #ddd;border-radius:1vw;padding:3vw}.bp-top{display:flex;justify-content:space-between;align-items:center}.bp-logo{font-size:1.5vw;font-weight:800;color:#d71920}.bp-name{font-size:2vw}.bp-route{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin:4vw 0}.bp-code{font-size:5vw;font-weight:850}.bp-arrow{font-size:3vw;color:#d71920}.bp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1.5vw}.bp-grid span{display:block;font-size:.8vw;color:#7b8289}.bp-grid strong{font-size:1.5vw}.barcode{height:7vw;margin-top:3vw;background:repeating-linear-gradient(90deg,#111 0 3px,#fff 3px 6px,#111 6px 8px,#fff 8px 12px)}
+.offer{background:linear-gradient(135deg,#2c2020,#151515)}.offerbox{max-width:70vw}.offer .amount{font-size:5vw;color:#fff}
+.idlebox{max-width:70vw}
+</style>
+</head>
+<body>
+<section id="idle" class="screen active">
+ <div class="brand"><b>OS</b>Austrian Airlines</div>
+ <div class="idlebox"><div class="headline">Willkommen am Austrian Check-in in Wien.</div><div class="sub">Bitte halten Sie Reisedokumente und Buchungsbestätigung bereit. Gepäckstücke stellen Sie bitte auf die Waage am Schalter.</div></div>
+ <div class="footer"><span>Vienna Airport · Terminal 3</span><span>Have a pleasant flight.</span></div>
+</section>
+
+<section id="journey" class="screen">
+ <div class="brand"><b>OS</b>Austrian Airlines</div>
+ <div class="card">
+  <div style="font-size:1.2vw;margin-bottom:2vw" id="jName"></div>
+  <div class="route"><div><div class="airport">VIE</div><div>Vienna</div></div><div class="arrow">→</div><div class="airport right" id="jIata">BER</div></div>
+  <div class="details"><div class="detail"><span>Flight</span><strong id="jFlight"></strong></div><div class="detail"><span>Departure</span><strong id="jTime"></strong></div><div class="detail"><span>Gate</span><strong id="jGate"></strong></div><div class="detail"><span>Seat</span><strong id="jSeat"></strong></div><div class="detail"><span>Class</span><strong id="jClass"></strong></div></div>
+ </div>
+ <div class="footer"><span id="jConn"></span><span>Austrian Airlines</span></div>
+</section>
+
+<section id="baggage" class="screen">
+ <div class="brand"><b>OS</b>Austrian Airlines</div>
+ <div class="bagwrap"><div class="bag"><div id="bName" style="font-size:1.5vw"></div><div id="bWeight" class="weight">0.0 kg</div><div id="bResult" style="font-size:1.4vw"></div><div id="bAmount" class="amount"></div></div></div>
+ <div class="footer"><span>Checked baggage</span><span>Maximum accepted weight per item: 32 kg</span></div>
+</section>
+
+<section id="offer" class="screen offer">
+ <div class="brand"><b>OS</b>Austrian Airlines</div>
+ <div class="offerbox"><div class="headline" id="oTitle"></div><div class="sub" id="oText"></div><div class="amount" id="oAmount"></div></div>
+ <div class="footer"><span id="oName"></span><span>Please ask our agent for details.</span></div>
+</section>
+
+<section id="boarding" class="screen boarding">
+ <div class="bp">
+  <div class="bp-top"><div class="bp-logo">AUSTRIAN AIRLINES</div><div class="bp-name" id="bpName"></div></div>
+  <div class="bp-route"><div><div class="bp-code">VIE</div><div>Vienna</div></div><div class="bp-arrow">→</div><div style="text-align:right"><div class="bp-code" id="bpIata"></div><div id="bpTo"></div></div></div>
+  <div class="bp-grid"><div><span>FLIGHT</span><strong id="bpFlight"></strong></div><div><span>BOARDING</span><strong id="bpBoarding"></strong></div><div><span>DEPARTURE</span><strong id="bpTime"></strong></div><div><span>GATE</span><strong id="bpGate"></strong></div><div><span>SEAT</span><strong id="bpSeat"></strong></div><div><span>CLASS</span><strong id="bpClass"></strong></div></div>
+  <div class="barcode"></div>
+ </div>
+ <div style="color:#555;font-size:1vw">Boarding pass simulation · not valid for travel</div>
+</section>
+
+<script>
+const screens=[...document.querySelectorAll(".screen")];
+function show(id){screens.forEach(s=>s.classList.toggle("active",s.id===id))}
+function euro(v){return new Intl.NumberFormat("de-AT",{style:"currency",currency:"EUR"}).format(v||0)}
+function apply(p){
+ if(!p||!p.mode||p.mode==="idle"){show("idle");return}
+ if(p.mode==="journey"){show("journey");const x=p.p;document.getElementById("jName").textContent=x.name;document.getElementById("jIata").textContent=x.iata;document.getElementById("jFlight").textContent=x.flight;document.getElementById("jTime").textContent=x.time;document.getElementById("jGate").textContent=x.gate;document.getElementById("jSeat").textContent=x.seat;document.getElementById("jClass").textContent=x.class;document.getElementById("jConn").textContent=x.connection?`Connection: ${x.connection[0]} to ${x.connection[1]}`:""}
+ if(p.mode==="baggage"){show("baggage");document.getElementById("bName").textContent=p.passenger;document.getElementById("bWeight").textContent=(p.weight||0).toFixed(1)+" kg";const r=p.result;document.getElementById("bWeight").className="weight "+(r.reject?"bad":r.fee?"warn":"good");document.getElementById("bResult").textContent=r.text;document.getElementById("bAmount").textContent=r.fee?euro(r.fee):""}
+ if(p.mode==="offer"){show("offer");document.getElementById("oTitle").textContent=p.title;document.getElementById("oText").textContent=p.text;document.getElementById("oAmount").textContent=euro(p.amount);document.getElementById("oName").textContent=p.passenger}
+ if(p.mode==="boarding"){show("boarding");const x=p.p;document.getElementById("bpName").textContent=x.name;document.getElementById("bpIata").textContent=x.iata;document.getElementById("bpTo").textContent=x.to;document.getElementById("bpFlight").textContent=x.flight;document.getElementById("bpBoarding").textContent=x.boarding;document.getElementById("bpTime").textContent=x.time;document.getElementById("bpGate").textContent=x.gate;document.getElementById("bpSeat").textContent=x.seat;document.getElementById("bpClass").textContent=x.class}
+}
+function pull(){try{apply(JSON.parse(localStorage.getItem("austrianPassengerDisplay")||'{"mode":"idle"}'))}catch(e){}}
+window.addEventListener("storage",e=>{if(e.key==="austrianPassengerDisplay")pull()});
+try{const c=new BroadcastChannel("austrian-checkin-display");c.onmessage=e=>apply(e.data)}catch(e){}
+setInterval(pull,1000);pull();
+</script>
+</body>
+</html>
